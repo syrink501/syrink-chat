@@ -70,7 +70,7 @@ textarea#msg:focus{outline:none;border-color:var(--gold)}
       var host=document.getElementById('chat')||document.body;
       var d=document.createElement('div');
       d.className='errbox';
-      d.textContent='\u26A0 Anzeige-Fehler:\n'+msg+'\n(Zeile '+line+':'+col+')';
+      d.textContent='⚠ Anzeige-Fehler:\n'+msg+'\n(Zeile '+line+':'+col+')';
       host.appendChild(d);
     }catch(e){}
     return false;
@@ -109,7 +109,7 @@ var chat = document.getElementById('chat');
 var input = document.getElementById('msg');
 var sendBtn = document.getElementById('send');
 var sugg = document.getElementById('sugg');
-var history = [];
+var convo = [];
 var busy = false;
 
 function esc(t){return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
@@ -139,8 +139,8 @@ function stopTyping(){ var t=document.getElementById('typing'); if(t){ t.parentN
 
 function transcript(){
   var out=[];
-  for(var i=Math.max(0,history.length-8); i<history.length; i++){
-    out.push((history[i].r==='u'?'Ilias':'Assistent')+': '+history[i].t);
+  for(var i=Math.max(0,convo.length-8); i<convo.length; i++){
+    out.push((convo[i].r==='u'?'Ilias':'Assistent')+': '+convo[i].t);
   }
   return out.join('\n');
 }
@@ -152,7 +152,7 @@ function send(text){
   if(sugg){ sugg.style.display='none'; }
   bubble('u', text);
   var hist=transcript();
-  history.push({r:'u', t:text});
+  convo.push({r:'u', t:text});
   input.value=''; autoGrow();
   typing();
 
@@ -165,7 +165,7 @@ function send(text){
     var reply=(xhr.responseText||'').replace(/^\s+|\s+$/g,'');
     if(!reply) reply='(Keine Antwort erhalten – bitte nochmal versuchen.)';
     bubble('a', reply);
-    history.push({r:'a', t:reply});
+    convo.push({r:'a', t:reply});
     busy=false; sendBtn.disabled=false; input.focus();
   };
   xhr.onerror=function(){
